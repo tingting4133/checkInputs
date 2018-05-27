@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ch-ZN">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+    body{
+      background: #eeeeee;
+    }
+    .content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: auto;
+    }
+    .form {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      background: #ffffff;
+      width: 600px;
+      height: auto;
+      padding: 32px;
+      border-radius: 20px;
+    }
+    .form .form-item {
+      position: relative;
+      margin-bottom: 16px;
+    }
+    .form .form-item label {
+      display: block;
+      width: 100%;
+      height: 16px;
+      padding-bottom: 7px;
+      color: #cccccc;
+    }
+    .form .form-item input {
+      width: 260px;
+      height: 16px;
+      padding: 16px;
+      border-radius: 5px;
+      border: 0;
+      background: #eeeeee;
+      color: #f4645f;
+    }
+    .form .form-item input:focus {
+      border: 0;
+      outline: 0;
+    }
+    .form .form-err {
+      position: absolute;
+      top: 20px;
+      left: -3px;
+      width: 100%;
+      height: 48px;
+      border: 3px solid #e21084;
+      border-radius: 5px;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .form .btn-sign-up {
+      padding: 16px 32px;
+      background: #f4645f;
+      border-radius: 5px;
+      border: 0;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <div class="content">
+    <form action="#" class="form">
+      <div class="form-item">
+        <label for="username">用户名</label>
+        <input type="text" id="username" name="username" value="Eric">
+        <div class="form-err"></div>
+      </div>
+      <div class="form-item">
+        <label for="password">密码</label>
+        <input type="password" id="password" name="password">
+        <div class="form-err"></div>
+      </div>
+      <div class="form-item">
+        <label for="email">邮箱地址</label>
+        <input type="email" id="email" name="email">
+        <div class="form-err"></div>
+      </div>
+      <div class="form-item">
+        <label for="address">地址</label>
+        <input type="text" id="address" name="address" value="中国">
+        <div class="form-err"></div>
+      </div>
+      <div class="form-item">
+        <label for="birthday">生日</label>
+        <input type="number" id="birthday" name="birthday" value="19960312">
+        <div class="form-err"></div>
+      </div>
+      <div class="form-item">
+        <label for="tel">联系方式</label>
+        <input type="tel" id="tel" name="tel" value="01012345678">
+        <div class="form-err"></div>
+      </div>
+      <input type="submit" value="注册" class="btn-sign-up">
+    </form>
+  </div>
+  <script>
+    /**
+    * 1. 获取鼠标位置
+    * 2. 获取注册按钮位置(多个)
+    * 3. 判断距离
+    * 4. 判断输入是否合法
+    * 5. 激活动画
+    */
+    window.onload = () => {
+      let form = document.querySelector('.form');
+      let btn = form.querySelector('.btn-sign-up');
+      let posOfSignUpBtn = {
+        x: btn.offsetLeft,
+        y: btn.offsetTop
+      }
+
+      window.onmousemove = (e) =>{
+        if( getDistanceOfPoints(posOfSignUpBtn, getMousePos()) < 75 ){
+          console.log(document.querySelector('#email').parentNode.children[2]);
+          document.querySelector('#email').parentNode.children[2].style.opacity = 1;
+        } else {
+          document.querySelector('#email').parentNode.children[2].style.opacity = 0;
+        }
+      }
+    }
+
+    function getMousePos(e){
+      if(!e){
+        e = window.event;
+      }
+      if( e.pageX ){
+        return {x: e.pageX, y: e.pageY};
+      }
+      return {
+        x: window.body.scrollLeft + window.document.scrollLeft + e.clientLeft, 
+        y: window.body.scrollTop + window.document.scrollTop + e.clientTop
+      };
+    }
+
+    function getDistanceOfPoints(p1, p2){
+      return Math.sqrt( (p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y) );
+    }
+  </script>
+</body>
+</html>
