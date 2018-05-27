@@ -2,7 +2,7 @@
 <html lang="ch-ZN">
 <head>
   <meta charset="UTF-8">
-  <title>Document</title>
+  <title>输入验证动画</title>
   <style>
     * {
       margin: 0;
@@ -39,6 +39,9 @@
       padding-bottom: 7px;
       color: #cccccc;
     }
+    /**
+    * input输入框默认样式重置方法：border: 0; &:focus{ border: 0; outline: 0;};
+    */
     .form .form-item input {
       width: 260px;
       height: 16px;
@@ -62,13 +65,20 @@
       border-radius: 5px;
       opacity: 0;
       pointer-events: none;
+      transition: all .5s;
     }
     .form .btn-sign-up {
+      width: 100px;
       padding: 16px 32px;
       background: #f4645f;
       border-radius: 5px;
       border: 0;
       color: #ffffff;
+      transition: all .5s;
+    }
+    .form .btn-sign-up:hover {
+      background-color: #303030;
+      width: 120px;
     }
   </style>
 </head>
@@ -110,46 +120,78 @@
   </div>
   <script>
     /**
-    * 1. 获取鼠标位置
-    * 2. 获取注册按钮位置(多个)
-    * 3. 判断距离
-    * 4. 判断输入是否合法
-    * 5. 激活动画
+    * 总体思路
+    *   1. 获取鼠标位置
+    *   2. 获取注册按钮位置
+    *   3. 判断距离
+    *   4. 判断输入是否合法
+    *   5. 激活动画
     */
     window.onload = () => {
-      let form = document.querySelector('.form');
-      let btn = form.querySelector('.btn-sign-up');
-      let posOfSignUpBtn = {
-        x: btn.offsetLeft,
-        y: btn.offsetTop
-      }
-
+      const form = document.querySelector('.form');
+      const btn = form.querySelector('.btn-sign-up');
+      // 提交按钮位置
+      const posOfSignUpBtn = {
+        x: btn.offsetLeft + btn.offsetWidth / 2,
+        y: btn.offsetTop + btn.offsetHeight / 2
+      };
+      console.log(posOfSignUpBtn);
+      // 临界距离
+      const dis = 80;
+      /**
+      * 鼠标接近注册按钮时，判断输入框中的值是否合理;输入不合理时触发提醒动画
+      */
       window.onmousemove = (e) =>{
-        if( getDistanceOfPoints(posOfSignUpBtn, getMousePos()) < 75 ){
-          console.log(document.querySelector('#email').parentNode.children[2]);
-          document.querySelector('#email').parentNode.children[2].style.opacity = 1;
+        let inputs = document.querySelectorAll(".form-item input");
+        if( getDistanceOfPoints(posOfSignUpBtn, getMousePos(e)) < 80 ){
+          Array.prototype.forEach.call(inputs,(item) => {
+            if( !item.value || item.type=="email" && !validateEmail(item.value) ){
+              item.nextElementSibling.style.opacity = 1;
+            } else {
+              item.nextElementSibling.style.opacity = 0;
+            }
+          });
         } else {
-          document.querySelector('#email').parentNode.children[2].style.opacity = 0;
+          Array.prototype.forEach.call(inputs, (item) => {
+            item.nextElementSibling.style.opacity = 0;
+          });
         }
       }
     }
 
-    function getMousePos(e){
-      if(!e){
-        e = window.event;
-      }
+    /**
+    * 获取鼠标相对html页面的位置
+    * 为了兼容火狐浏览器，调用时必须传入event
+    */
+    const getMousePos = (e) => {
+      e = window.event || e;
       if( e.pageX ){
-        return {x: e.pageX, y: e.pageY};
+        return {
+          x: e.pageX,
+          y: e.pageY
+        };
+      } else if ( e.clientX ) {
+        return {
+          x: window.body.scrollLeft + document.documentElement.scrollLeft + e.clientLeft, 
+          y: window.body.scrollTop + document.documentElement.scrollTop + e.clientTop
+        };
       }
-      return {
-        x: window.body.scrollLeft + window.document.scrollLeft + e.clientLeft, 
-        y: window.body.scrollTop + window.document.scrollTop + e.clientTop
-      };
-    }
+    };
 
-    function getDistanceOfPoints(p1, p2){
-      return Math.sqrt( (p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y) );
-    }
+    /**
+    * 计算两点间距
+    */
+    const getDistanceOfPoints = (p1, p2) => {
+      return Math.sqrt( (p1.x-p2.x)*(p1.x-p2.x) + (p1.y-p2.y)*(p1.y-p2.y) );
+    };
+
+    /**
+    * 用正则表达式校验输入的邮件地址是否合法
+    */
+    const validateEmail = (email) => {
+      var re = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+      return re.test( String(email).toLowerCase() );
+    };
   </script>
 </body>
 </html>
